@@ -16,7 +16,7 @@ jobs:
           script: |
             async function run() {
               const context = github.context;
-              const octokit = github.getOctokit(context.token);
+              const octokit = github.getOctokit(github.token);
               const { data: compare } = await octokit.rest.repos.compareCommits({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
