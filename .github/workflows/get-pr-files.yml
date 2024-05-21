@@ -14,11 +14,9 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const core = require('@actions/core');
-
             async function run() {
               const context = github.context;
-              const octokit = github.getOctokit(core.getInput('github-token'));
+              const octokit = github.getOctokit(context.token);
               const { data: compare } = await octokit.rest.repos.compareCommits({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
