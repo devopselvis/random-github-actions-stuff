@@ -1,0 +1,35 @@
+name: Comment PR with changed files
+on:
+  pull_request:
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.6
+
+      - name: Comment PR
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            async function run() {
+              const context = github.context;
+              const { data: compare } = await github.rest.repos.compareCommits({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                base: context.payload.pull_request.base.sha,
+                head: context.payload.pull_request.head.sha,
+              });
+
+              const changedFiles = compare.files.map(f => f.filename).join('\n');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `Changed files: \n${changedFiles}`
+              });
+            }
+
+            run().catch(core.setFailed);
