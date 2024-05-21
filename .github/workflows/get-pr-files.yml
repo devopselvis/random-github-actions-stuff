@@ -16,8 +16,7 @@ jobs:
           script: |
             async function run() {
               const context = github.context;
-              const octokit = github.getOctokit(github.token);
-              const { data: compare } = await octokit.rest.repos.compareCommits({
+              const { data: compare } = await github.octokit.rest.repos.compareCommits({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 base: context.payload.pull_request.base.sha,
@@ -25,7 +24,7 @@ jobs:
               });
 
               const changedFiles = compare.files.map(f => f.filename).join('\n');
-              await octokit.rest.issues.createComment({
+              await github.octokit.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
